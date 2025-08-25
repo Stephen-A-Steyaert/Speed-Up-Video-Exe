@@ -26,8 +26,17 @@ jobs:
       - name: Build EXE with custom icon
         run: |
           pyinstaller --onefile --noconsole --icon=ff.ico main.py
-          # replace "main.py" with your script
-          # replace "ff.ico" with your icon path
+
+      - name: Create Git tag
+        run: |
+          TAG="build-${GITHUB_RUN_NUMBER}"
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag $TAG
+          git push origin $TAG
+        env:
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          GITHUB_TOKEN: ${{ secrets.KEY }}
 
       - name: Create Release for this push
         id: create_release
