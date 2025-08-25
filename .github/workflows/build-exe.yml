@@ -26,7 +26,7 @@ jobs:
 
       - name: Build EXE
         run: |
-          pyinstaller --onefile --noconsole --icon=app.ico main.py
+          pyinstaller --onefile --noconsole --icon=ff.ico main.py
           # replace "main.py" with your entry script
 
       - name: Upload EXE artifact
