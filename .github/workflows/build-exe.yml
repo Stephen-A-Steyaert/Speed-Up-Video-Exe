@@ -27,7 +27,7 @@ jobs:
         run: |
           pyinstaller --onefile --noconsole --icon=ff.ico main.py
           # replace "main.py" with your script
-          # replace "app.ico" with your icon path
+          # replace "ff.ico" with your icon path
 
       - name: Create Release for this push
         id: create_release
@@ -36,10 +36,11 @@ jobs:
           tag: ${{ github.sha }}   # use commit SHA as tag
           name: Release ${{ github.sha }}
           body: "Automated release for commit ${{ github.sha }}"
+          token: ${{ secrets.KEY }}   # <-- use your secret here
 
       - name: Upload EXE to Release
         uses: softprops/action-gh-release@v1
         with:
           files: dist/*.exe
         env:
-          GITHUB_TOKEN: ${{ secrets.KEY }}
+          GITHUB_TOKEN: ${{ secrets.KEY }}   # <-- use your secret here
