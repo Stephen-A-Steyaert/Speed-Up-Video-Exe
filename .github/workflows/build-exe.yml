@@ -3,7 +3,7 @@ name: Build Windows EXE
 on:
   push:
     branches:
-      - main   # triggers on every push to main
+      - main   # triggers on every push
 
 jobs:
   build:
@@ -26,33 +26,14 @@ jobs:
       - name: Build EXE with custom icon
         run: |
           pyinstaller --onefile --noconsole --icon=ff.ico main.py
+          # replace "main.py" with your script
+          # replace "ff.ico" with your icon path
 
-      - name: Create Git tag
-        shell: pwsh
-        run: |
-          $TAG = "build-$($env:GITHUB_RUN_NUMBER)"
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git tag $TAG
-          git remote set-url origin https://x-access-token:$($env:GITHUB_TOKEN)@github.com/${{ github.repository }}.git
-          git push origin $TAG
-        env:
-            GITHUB_RUN_NUMBER: ${{ github.run_number }}
-            GITHUB_TOKEN: ${{ secrets.KEY }}
-
-
-      - name: Create Release for this push
-        id: create_release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: "build-${{ github.run_number }}"
-          name: "Automated Release #${{ github.run_number }}"
-          body: "Automated release for commit ${{ github.sha }}"
-          token: ${{ secrets.KEY }}   # <-- use your secret here
-
-      - name: Upload EXE to Release
+      - name: Create Release and Upload EXE
         uses: softprops/action-gh-release@v1
         with:
           files: dist/*.exe
+          tag_name: "build-${{ github.run_number }}"
+          generate_release_notes: true
         env:
-          GITHUB_TOKEN: ${{ secrets.KEY }}   # <-- use your secret here
+          GITHUB_TOKEN: ${{ secrets.KEY }}
