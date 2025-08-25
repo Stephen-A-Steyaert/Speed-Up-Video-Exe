@@ -30,7 +30,7 @@ jobs:
       - name: Create Git tag
         shell: pwsh
         run: |
-          $TAG = "build-${$env:GITHUB_RUN_NUMBER}"
+          $TAG = "build-$($env:GITHUB_RUN_NUMBER)"
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git tag $TAG
