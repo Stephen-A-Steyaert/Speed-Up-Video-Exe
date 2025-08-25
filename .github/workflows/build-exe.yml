@@ -1,10 +1,9 @@
 name: Build Windows EXE
 
 on:
-  workflow_dispatch:   # manual trigger
   push:
     branches:
-      - main           # also run automatically on pushes to main
+      - main   # triggers on every push to main
 
 jobs:
   build:
@@ -24,13 +23,23 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyinstaller moviepy
 
-      - name: Build EXE
+      - name: Build EXE with custom icon
         run: |
-          pyinstaller --onefile --noconsole --icon=ff.ico main.py
-          # replace "main.py" with your entry script
+          pyinstaller --onefile --noconsole --icon=app.ico main.py
+          # replace "main.py" with your script
+          # replace "app.ico" with your icon path
 
-      - name: Upload EXE artifact
-        uses: actions/upload-artifact@v4
+      - name: Create Release for this push
+        id: create_release
+        uses: ncipollo/release-action@v1
         with:
-          name: windows-exe
-          path: dist/*
+          tag: ${{ github.sha }}   # use commit SHA as tag
+          name: Release ${{ github.sha }}
+          body: "Automated release for commit ${{ github.sha }}"
+
+      - name: Upload EXE to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.KEY }}
